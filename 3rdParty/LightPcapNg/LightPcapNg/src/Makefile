@@ -14,7 +14,7 @@ TESTE = $(TESTS:.c=.test)
 LDFLAGS = -ldl
 INCLUDES = -I$(ROOT_DIR)/include
 DEBUG = -g -p -ggdb -D_DEBUG
-CFLAGS = -Wall -O2 -fPIC -DUNIVERSAL -g -arch arm64 -target arm64-apple-macos11 -isysroot /Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk
+CFLAGS = -Wall -O2 -fPIC -DUNIVERSAL -g
 # CFLAGS += $(DEBUG)
 # LDFLAGS += $(DEBUG)
 
