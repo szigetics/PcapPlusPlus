@@ -39,6 +39,8 @@ function HELP {
    exit 1
 }
 
+MACOS_SDK_HOME="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+
 HAS_PCAP_IMMEDIATE_MODE=0
 HAS_SET_DIRECTION_ENABLED=0
 
@@ -110,7 +112,7 @@ case $key in
    # build for Apple Silicon (arm64 architecture)
    --arm64)
      BUILD_FOR_ARM64=1
-     ARM64_BUILD_FLAGS=" -arch arm64 -target arm64-apple-macos11 -isysroot /Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk "
+     ARM64_BUILD_FLAGS=" -arch arm64 -target arm64-apple-macos11 -isysroot $MACOS_SDK_HOME "
      shift ;;
 
    # help switch - display help and exit
@@ -140,7 +142,7 @@ cp -f mk/PcapPlusPlus.mk.common $PCAPPLUSPLUS_MK
 MACOS_MINOR_VERSION=`(sw_vers -productVersion) | awk -F '.' '{print $2}'`
 if [[ $MACOS_MINOR_VERSION -ge 14 ]]; then
    echo -e "\n# setting SDK home for MacOS version >= 10.14" >> $PCAPPLUSPLUS_MK
-   echo -e "MACOS_SDK_HOME := /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\n" >> $PCAPPLUSPLUS_MK
+   echo -e "MACOS_SDK_HOME := $MACOS_SDK_HOME\n" >> $PCAPPLUSPLUS_MK
 fi
 
 cat mk/PcapPlusPlus.mk.macosx >> $PCAPPLUSPLUS_MK
