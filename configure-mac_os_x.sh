@@ -39,7 +39,7 @@ function HELP {
    exit 1
 }
 
-MACOS_SDK_HOME="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+MACOS_SDK_HOME="/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk"
 
 HAS_PCAP_IMMEDIATE_MODE=0
 HAS_SET_DIRECTION_ENABLED=0
@@ -145,6 +145,12 @@ if [[ $MACOS_MINOR_VERSION -ge 14 ]]; then
    echo -e "MACOS_SDK_HOME := $MACOS_SDK_HOME\n" >> $PCAPPLUSPLUS_MK
 fi
 
+if [ -n "$BUILD_FOR_ARM64" ]; then
+   echo -e "\nCXXFLAGS += $ARM64_BUILD_FLAGS" >> $PCAPPLUSPLUS_MK
+   echo -e '\nPCAPPP_BUILD_FLAGS += $(CXXFLAGS)' >> $PCAPPLUSPLUS_MK
+   echo -e "\n" >> $PCAPPLUSPLUS_MK
+fi
+
 cat mk/PcapPlusPlus.mk.macosx >> $PCAPPLUSPLUS_MK
 
 echo -e "\n\nPCAPPLUSPLUS_HOME := "$PWD >> $PLATFORM_MK
@@ -179,7 +185,10 @@ if [ -n "$USE_ZSTD" ]; then
 fi
 
 if [ -n "$BUILD_FOR_ARM64" ]; then
-   sed -i -e 's#@$(CC) $(INCLUDES) -Wall.*\"$<\"#@$(CC) $(INCLUDES) -Wall'"$ARM64_BUILD_FLAGS"'\"$<\"#g' 3rdParty/LightPcapNg/Makefile
+   sed -i -e 's#@$(CC) $(INCLUDES) -Wall.*-O2 $(DEFS) -g -c -o \"$@\" \"$<\"#@$(CC) $(INCLUDES) -Wall'"$ARM64_BUILD_FLAGS"'-O2 $(DEFS) -g -c -o \"$@\" \"$<\"#g' 3rdParty/LightPcapNg/Makefile
+   ADDITIONAL_MODIFIED_FILES="3rdParty/LightPcapNg/Makefile"
+   sed -i -e 's#CFLAGS = -Wall -O2 -fPIC -DUNIVERSAL -g#CFLAGS = -Wall -O2 -fPIC -DUNIVERSAL -g '"$ARM64_BUILD_FLAGS"'#g' 3rdParty/LightPcapNg/LightPcapNg/src/Makefile
+   ADDITIONAL_MODIFIED_FILES+=", 3rdParty/LightPcapNg/LightPcapNg/src/Makefile"
 fi
 
 # generate installation and uninstallation scripts
@@ -191,4 +200,4 @@ cp mk/uninstall.sh.template mk/uninstall.sh
 sed -i.bak "s|{{INSTALL_DIR}}|$INSTALL_DIR|g" mk/uninstall.sh && rm mk/uninstall.sh.bak
 chmod +x mk/uninstall.sh
 
-echo "PcapPlusPlus configuration is complete. Files created (or modified): $PLATFORM_MK, $PCAPPLUSPLUS_MK", mk/install.sh, mk/uninstall.sh
+echo "PcapPlusPlus configuration is complete. Files created (or modified): $PLATFORM_MK, $PCAPPLUSPLUS_MK", mk/install.sh, mk/uninstall.sh $ADDITIONAL_MODIFIED_FILES
