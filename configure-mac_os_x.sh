@@ -186,7 +186,7 @@ fi
 
 if [ -n "$BUILD_FOR_ARM64" ]; then
    sed -i -e 's#@$(CC) $(INCLUDES) -Wall.*-O2 $(DEFS) -g -c -o \"$@\" \"$<\"#@$(CC) $(INCLUDES) -Wall'"$ARM64_BUILD_FLAGS"'-O2 $(DEFS) -g -c -o \"$@\" \"$<\"#g' 3rdParty/LightPcapNg/Makefile
-   ADDITIONAL_MODIFIED_FILES="3rdParty/LightPcapNg/Makefile"
+   ADDITIONAL_MODIFIED_FILES=", 3rdParty/LightPcapNg/Makefile"
    sed -i -e 's#CFLAGS = -Wall -O2 -fPIC -DUNIVERSAL -g#CFLAGS = -Wall -O2 -fPIC -DUNIVERSAL -g '"$ARM64_BUILD_FLAGS"'#g' 3rdParty/LightPcapNg/LightPcapNg/src/Makefile
    ADDITIONAL_MODIFIED_FILES+=", 3rdParty/LightPcapNg/LightPcapNg/src/Makefile"
 fi
