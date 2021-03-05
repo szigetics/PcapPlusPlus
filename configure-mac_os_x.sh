@@ -26,6 +26,8 @@ function HELP {
    echo "                           the lib file in the default lib paths"
    echo "--use-zstd               --Use Zstd for pcapng files compression/decompression. This parameter is optional"
    echo ""
+   echo "--arm64                  --build for Apple Silicon (ARM64 architecture)"
+   echo ""
    echo -e "-h|--help                --Displays this help message and exits. No further actions are performed"\\n
    echo -e "Examples:"
    echo -e "      $SCRIPT"
@@ -43,6 +45,9 @@ HAS_SET_DIRECTION_ENABLED=0
 # initializing libpcap include/lib dirs to an empty string 
 LIBPCAP_INLCUDE_DIR=""
 LIBPCAP_LIB_DIR=""
+
+# initializing arm64 build flags to an empty string
+ARM64_BUILD_FLAGS=""
 
 # default installation directory
 INSTALL_DIR=/usr/local
@@ -100,7 +105,13 @@ case $key in
    # use Zstd
    --use-zstd)
      USE_ZSTD=1
-     shift ;;     
+     shift ;;
+     
+   # build for Apple Silicon (arm64 architecture)
+   --arm64)
+     BUILD_FOR_ARM64=1
+     ARM64_BUILD_FLAGS=" -arch arm64 -target arm64-apple-macos11 -isysroot /Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk "
+     shift ;;
 
    # help switch - display help and exit
    -h|--help)
@@ -163,6 +174,10 @@ fi
 if [ -n "$USE_ZSTD" ]; then
    echo -e "DEFS += -DUSE_Z_STD" > 3rdParty/LightPcapNg/zstd.mk
    cat mk/PcapPlusPlus.mk.zstd >> $PCAPPLUSPLUS_MK
+fi
+
+if [ -n "$BUILD_FOR_ARM64" ]; then
+   sed -i -e 's#@$(CC) $(INCLUDES) -Wall.*\"$<\"#@$(CC) $(INCLUDES) -Wall'"$ARM64_BUILD_FLAGS"'\"$<\"#g' 3rdParty/LightPcapNg/Makefile
 fi
 
 # generate installation and uninstallation scripts
