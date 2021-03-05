@@ -39,7 +39,7 @@ function HELP {
    exit 1
 }
 
-MACOS_SDK_HOME="/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk"
+MACOS_SDK_HOME="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
 
 HAS_PCAP_IMMEDIATE_MODE=0
 HAS_SET_DIRECTION_ENABLED=0
