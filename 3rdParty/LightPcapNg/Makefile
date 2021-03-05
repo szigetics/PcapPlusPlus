@@ -15,7 +15,7 @@ DEFS := -DUNIVERSAL
 			
 Obj/%.o: LightPcapNg/src/%.c
 	@echo 'Building file: $<'
-	@$(CC) $(INCLUDES) -Wall -O2 $(DEFS) -g -c -o "$@" "$<"
+	@$(CC) $(INCLUDES) -Wall -O2 -arch arm64 -target arm64-apple-macos11 -isysroot /Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk $(DEFS) -g -c -o "$@" "$<"
 
 CUR_TARGET := $(notdir $(shell pwd))
 
